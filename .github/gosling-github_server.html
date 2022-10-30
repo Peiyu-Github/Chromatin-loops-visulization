@@ -1,0 +1,1065 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gosling Visualization</title>
+    <link rel="stylesheet" href="https://unpkg.com/higlass@1.11/dist/hglib.css">
+    <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/pixi.js@6/dist/browser/pixi.min.js"></script>
+    <script src="https://unpkg.com/higlass@1.11/dist/hglib.js"></script>
+    <script src="https://unpkg.com/gosling.js@0.9.25/dist/gosling.js"></script>
+</head>
+<body>
+    <div id="gosling-container"/>
+    <script>
+        gosling.embed(document.getElementById('gosling-container'), {
+  "title": "Chromosome loop patterns",
+  "style": {"linkStyle": "elliptical"},
+  "views": [
+    {
+      "linkingId": "view1",
+      "xDomain": {"chromosome": "chrX", "interval": [0, 150000000]},
+      "tracks": [
+        {
+          "alignment": "overlay",
+          "title": "Chromosome Position",
+          "data": {
+            "url": "https://raw.githubusercontent.com/sehilyi/gemini-datasets/master/data/UCSC.HG38.Human.CytoBandIdeogram.csv",
+            "type": "csv",
+            "chromosomeField": "Chromosome",
+            "genomicFields": ["chromStart", "chromEnd"]
+          },
+          "tracks": [
+            {
+              "mark": "rect",
+              "dataTransform": [
+                {
+                  "type": "filter",
+                  "field": "Stain",
+                  "oneOf": ["acen"],
+                  "not": true
+                }
+              ],
+              "color": {
+                "field": "Stain",
+                "type": "nominal",
+                "domain": [
+                  "gneg",
+                  "gpos25",
+                  "gpos50",
+                  "gpos75",
+                  "gpos100",
+                  "gvar"
+                ],
+                "range": [
+                  "#C0C0C0",
+                  "#808080",
+                  "#404040",
+                  "black",
+                  "black",
+                  "black"
+                ]
+              },
+              "size": {"value": 20}
+            },
+            {
+              "mark": "rect",
+              "dataTransform": [
+                {"type": "filter", "field": "Stain", "oneOf": ["acen"]}
+              ],
+              "size": {"value": 10},
+              "color": {"value": "#B74780"}
+            },
+            {
+              "mark": "text",
+              "dataTransform": [
+                {
+                  "type": "filter",
+                  "field": "Stain",
+                  "oneOf": ["gpos25", "gpos50", "gpos100"]
+                }
+              ],
+              "text": {"field": "Name", "type": "nominal"},
+              "visibility": [
+                {
+                  "operation": "less-than",
+                  "measure": "width",
+                  "threshold": "|xe-x|",
+                  "transitionPadding": 10,
+                  "target": "mark"
+                }
+              ],
+              "size": {"value": 6},
+              "style": {"dy": 16, "outline": "white"}
+            },
+            {
+              "mark": "text",
+              "dataTransform": [
+                {
+                  "type": "filter",
+                  "field": "Stain",
+                  "oneOf": ["gneg", "gpos75", "gvar"]
+                }
+              ],
+              "text": {"field": "Name", "type": "nominal"},
+              "visibility": [
+                {
+                  "operation": "less-than",
+                  "measure": "width",
+                  "threshold": "|xe-x|",
+                  "transitionPadding": 10,
+                  "target": "mark"
+                }
+              ],
+              "size": {"value": 6},
+              "style": {"dy": -16, "outline": "white"}
+            },
+            {
+              "mark": "brush",
+              "x": {"linkingId": "view2"},
+              "strokeWidth": {"value": 0}
+            }
+          ],
+          "x": {"field": "chromStart", "type": "genomic"},
+          "xe": {"field": "chromEnd", "type": "genomic"},
+          "color": {"value": "black"},
+          "stroke": {"value": "white"},
+          "strokeWidth": {"value": 1},
+          "style": {"outline": "white"},
+          "width": 800,
+          "height": 60
+        },
+        {
+          "alignment": "overlay",
+          "title": "AKTHY",
+          "data": {
+            "url": "https://gist.githubusercontent.com/Peiyu-Github/6349467d04732585d77583701cf412ba/raw/78b7a59053a9512a648de543926644d4aa91dc44/gosling_AKTHY.txt",
+            "type": "csv",
+            "headerNames": ["id", "chr", "start", "end"],
+            "chromosomePrefix": "chr",
+            "chromosomeField": "chr",
+            "genomicFields": ["start", "end"],
+            "separator": ",",
+            "longToWideId": "id",
+            "sampleLength": 1000
+          },
+          "dataTransform": [
+            {"type": "filter", "field": "chr", "oneOf": ["chrX"]},
+            {"type": "filter", "field": "chr_2", "oneOf": ["chrX"]}
+          ],
+          "tracks": [
+            {"mark": "withinLink"},
+            {
+              "mark": "brush",
+              "x": {"linkingId": "view2"},
+              "strokeWidth": {"value": 0}
+            }
+          ],
+          "x": {"field": "start", "type": "genomic", "linkingId": "view1"},
+          "xe": {"field": "start_2", "type": "genomic"},
+          "x1": {"field": "end", "type": "genomic"},
+          "x1e": {"field": "End_2", "type": "genomic"},
+          "stroke": {"value": "#6CB74C"},
+          "strokeWidth": {"value": 1},
+          "opacity": {"value": 0.4},
+          "style": {"outline": "white"},
+          "width": 800,
+          "height": 220
+        },
+        {
+          "alignment": "overlay",
+          "title": "ARPE",
+          "data": {
+            "url": "https://gist.githubusercontent.com/Peiyu-Github/6349467d04732585d77583701cf412ba/raw/78b7a59053a9512a648de543926644d4aa91dc44/gosling_ARPE.txt",
+            "type": "csv",
+            "headerNames": ["id", "chr", "start", "end"],
+            "chromosomePrefix": "chr",
+            "chromosomeField": "chr",
+            "genomicFields": ["start", "end"],
+            "separator": ",",
+            "longToWideId": "id",
+            "sampleLength": 1000
+          },
+          "dataTransform": [
+            {"type": "filter", "field": "chr", "oneOf": ["chrX"]},
+            {"type": "filter", "field": "chr_2", "oneOf": ["chrX"]}
+          ],
+          "tracks": [
+            {"mark": "withinLink"},
+            {
+              "mark": "brush",
+              "x": {"linkingId": "view2"},
+              "strokeWidth": {"value": 0}
+            }
+          ],
+          "x": {"field": "start", "type": "genomic", "linkingId": "view1"},
+          "xe": {"field": "start_2", "type": "genomic"},
+          "x1": {"field": "end", "type": "genomic"},
+          "x1e": {"field": "End_2", "type": "genomic"},
+          "stroke": {"value": "#6CB74C"},
+          "strokeWidth": {"value": 1},
+          "opacity": {"value": 0.4},
+          "style": {"outline": "white"},
+          "width": 800,
+          "height": 220
+        },
+        {
+          "alignment": "overlay",
+          "title": "DHL2",
+          "data": {
+            "url": "https://gist.githubusercontent.com/Peiyu-Github/6349467d04732585d77583701cf412ba/raw/78b7a59053a9512a648de543926644d4aa91dc44/gosling_DHL2.txt",
+            "type": "csv",
+            "headerNames": ["id", "chr", "start", "end"],
+            "chromosomePrefix": "chr",
+            "chromosomeField": "chr",
+            "genomicFields": ["start", "end"],
+            "separator": ",",
+            "longToWideId": "id",
+            "sampleLength": 1000
+          },
+          "dataTransform": [
+            {"type": "filter", "field": "chr", "oneOf": ["chrX"]},
+            {"type": "filter", "field": "chr_2", "oneOf": ["chrX"]}
+          ],
+          "tracks": [
+            {"mark": "withinLink"},
+            {
+              "mark": "brush",
+              "x": {"linkingId": "view2"},
+              "strokeWidth": {"value": 0}
+            }
+          ],
+          "x": {"field": "start", "type": "genomic", "linkingId": "view1"},
+          "xe": {"field": "start_2", "type": "genomic"},
+          "x1": {"field": "end", "type": "genomic"},
+          "x1e": {"field": "End_2", "type": "genomic"},
+          "stroke": {"value": "#6CB74C"},
+          "strokeWidth": {"value": 1},
+          "opacity": {"value": 0.4},
+          "style": {"outline": "white"},
+          "width": 800,
+          "height": 220
+        },
+        {
+          "alignment": "overlay",
+          "title": "DHL4",
+          "data": {
+            "url": "https://gist.githubusercontent.com/Peiyu-Github/6349467d04732585d77583701cf412ba/raw/7eee23cde1d2acfabda3e1f18260717a461d3bc0/gosling_DHL4.txt",
+            "type": "csv",
+            "headerNames": ["id", "chr", "start", "end"],
+            "chromosomePrefix": "chr",
+            "chromosomeField": "chr",
+            "genomicFields": ["start", "end"],
+            "separator": ",",
+            "longToWideId": "id",
+            "sampleLength": 1000
+          },
+          "dataTransform": [
+            {"type": "filter", "field": "chr", "oneOf": ["chrX"]},
+            {"type": "filter", "field": "chr_2", "oneOf": ["chrX"]}
+          ],
+          "tracks": [
+            {"mark": "withinLink"},
+            {
+              "mark": "brush",
+              "x": {"linkingId": "view2"},
+              "strokeWidth": {"value": 0}
+            }
+          ],
+          "x": {"field": "start", "type": "genomic", "linkingId": "view1"},
+          "xe": {"field": "start_2", "type": "genomic"},
+          "x1": {"field": "end", "type": "genomic"},
+          "x1e": {"field": "End_2", "type": "genomic"},
+          "stroke": {"value": "#6CB74C"},
+          "strokeWidth": {"value": 1},
+          "opacity": {"value": 0.4},
+          "style": {"outline": "white"},
+          "width": 800,
+          "height": 220
+        },
+        {
+          "alignment": "overlay",
+          "title": "DU145",
+          "data": {
+            "url": "https://gist.githubusercontent.com/Peiyu-Github/6349467d04732585d77583701cf412ba/raw/78b7a59053a9512a648de543926644d4aa91dc44/gosling_DU145.txt",
+            "type": "csv",
+            "headerNames": ["id", "chr", "start", "end"],
+            "chromosomePrefix": "chr",
+            "chromosomeField": "chr",
+            "genomicFields": ["start", "end"],
+            "separator": ",",
+            "longToWideId": "id",
+            "sampleLength": 1000
+          },
+          "dataTransform": [
+            {"type": "filter", "field": "chr", "oneOf": ["chrX"]},
+            {"type": "filter", "field": "chr_2", "oneOf": ["chrX"]}
+          ],
+          "tracks": [
+            {"mark": "withinLink"},
+            {
+              "mark": "brush",
+              "x": {"linkingId": "view2"},
+              "strokeWidth": {"value": 0}
+            }
+          ],
+          "x": {"field": "start", "type": "genomic", "linkingId": "view1"},
+          "xe": {"field": "start_2", "type": "genomic"},
+          "x1": {"field": "end", "type": "genomic"},
+          "x1e": {"field": "End_2", "type": "genomic"},
+          "stroke": {"value": "#6CB74C"},
+          "strokeWidth": {"value": 1},
+          "opacity": {"value": 0.4},
+          "style": {"outline": "white"},
+          "width": 800,
+          "height": 220
+        },
+        {
+          "alignment": "overlay",
+          "title": "ECS",
+          "data": {
+            "url": "https://gist.githubusercontent.com/Peiyu-Github/6349467d04732585d77583701cf412ba/raw/78b7a59053a9512a648de543926644d4aa91dc44/gosling_ECS.txt",
+            "type": "csv",
+            "headerNames": ["id", "chr", "start", "end"],
+            "chromosomePrefix": "chr",
+            "chromosomeField": "chr",
+            "genomicFields": ["start", "end"],
+            "separator": ",",
+            "longToWideId": "id",
+            "sampleLength": 1000
+          },
+          "dataTransform": [
+            {"type": "filter", "field": "chr", "oneOf": ["chrX"]},
+            {"type": "filter", "field": "chr_2", "oneOf": ["chrX"]}
+          ],
+          "tracks": [
+            {"mark": "withinLink"},
+            {
+              "mark": "brush",
+              "x": {"linkingId": "view2"},
+              "strokeWidth": {"value": 0}
+            }
+          ],
+          "x": {"field": "start", "type": "genomic", "linkingId": "view1"},
+          "xe": {"field": "start_2", "type": "genomic"},
+          "x1": {"field": "end", "type": "genomic"},
+          "x1e": {"field": "End_2", "type": "genomic"},
+          "stroke": {"value": "#6CB74C"},
+          "strokeWidth": {"value": 1},
+          "opacity": {"value": 0.4},
+          "style": {"outline": "white"},
+          "width": 800,
+          "height": 220
+        },
+        {
+          "alignment": "overlay",
+          "title": "GM12878",
+          "data": {
+            "url": "https://gist.githubusercontent.com/Peiyu-Github/6349467d04732585d77583701cf412ba/raw/78b7a59053a9512a648de543926644d4aa91dc44/gosling_GM12878.txt",
+            "type": "csv",
+            "headerNames": ["id", "chr", "start", "end"],
+            "chromosomePrefix": "chr",
+            "chromosomeField": "chr",
+            "genomicFields": ["start", "end"],
+            "separator": ",",
+            "longToWideId": "id",
+            "sampleLength": 1000
+          },
+          "dataTransform": [
+            {"type": "filter", "field": "chr", "oneOf": ["chrX"]},
+            {"type": "filter", "field": "chr_2", "oneOf": ["chrX"]}
+          ],
+          "tracks": [
+            {"mark": "withinLink"},
+            {
+              "mark": "brush",
+              "x": {"linkingId": "view2"},
+              "strokeWidth": {"value": 0}
+            }
+          ],
+          "x": {"field": "start", "type": "genomic", "linkingId": "view1"},
+          "xe": {"field": "start_2", "type": "genomic"},
+          "x1": {"field": "end", "type": "genomic"},
+          "x1e": {"field": "End_2", "type": "genomic"},
+          "stroke": {"value": "#6CB74C"},
+          "strokeWidth": {"value": 1},
+          "opacity": {"value": 0.4},
+          "style": {"outline": "white"},
+          "width": 800,
+          "height": 220
+        },
+        {
+          "alignment": "overlay",
+          "title": "H1",
+          "data": {
+            "url": "https://gist.githubusercontent.com/Peiyu-Github/6349467d04732585d77583701cf412ba/raw/78b7a59053a9512a648de543926644d4aa91dc44/gosling_H1.txt",
+            "type": "csv",
+            "headerNames": ["id", "chr", "start", "end"],
+            "chromosomePrefix": "chr",
+            "chromosomeField": "chr",
+            "genomicFields": ["start", "end"],
+            "separator": ",",
+            "longToWideId": "id",
+            "sampleLength": 1000
+          },
+          "dataTransform": [
+            {"type": "filter", "field": "chr", "oneOf": ["chrX"]},
+            {"type": "filter", "field": "chr_2", "oneOf": ["chrX"]}
+          ],
+          "tracks": [
+            {"mark": "withinLink"},
+            {
+              "mark": "brush",
+              "x": {"linkingId": "view2"},
+              "strokeWidth": {"value": 0}
+            }
+          ],
+          "x": {"field": "start", "type": "genomic", "linkingId": "view1"},
+          "xe": {"field": "start_2", "type": "genomic"},
+          "x1": {"field": "end", "type": "genomic"},
+          "x1e": {"field": "End_2", "type": "genomic"},
+          "stroke": {"value": "#6CB74C"},
+          "strokeWidth": {"value": 1},
+          "opacity": {"value": 0.4},
+          "style": {"outline": "white"},
+          "width": 800,
+          "height": 220
+        },
+        {
+          "alignment": "overlay",
+          "title": "H1376",
+          "data": {
+            "url": "https://gist.githubusercontent.com/Peiyu-Github/6349467d04732585d77583701cf412ba/raw/35b2e7ea695b04ecb480f1522703e97e7e9ec3fc/gosling_H1376.txt",
+            "type": "csv",
+            "headerNames": ["id", "chr", "start", "end"],
+            "chromosomePrefix": "chr",
+            "chromosomeField": "chr",
+            "genomicFields": ["start", "end"],
+            "separator": ",",
+            "longToWideId": "id",
+            "sampleLength": 1000
+          },
+          "dataTransform": [
+            {"type": "filter", "field": "chr", "oneOf": ["chrX"]},
+            {"type": "filter", "field": "chr_2", "oneOf": ["chrX"]}
+          ],
+          "tracks": [
+            {"mark": "withinLink"},
+            {
+              "mark": "brush",
+              "x": {"linkingId": "view2"},
+              "strokeWidth": {"value": 0}
+            }
+          ],
+          "x": {"field": "start", "type": "genomic", "linkingId": "view1"},
+          "xe": {"field": "start_2", "type": "genomic"},
+          "x1": {"field": "end", "type": "genomic"},
+          "x1e": {"field": "End_2", "type": "genomic"},
+          "stroke": {"value": "#6CB74C"},
+          "strokeWidth": {"value": 1},
+          "opacity": {"value": 0.4},
+          "style": {"outline": "white"},
+          "width": 800,
+          "height": 220
+        },
+        {
+          "alignment": "overlay",
+          "title": "H1437",
+          "data": {
+            "url": "https://gist.githubusercontent.com/Peiyu-Github/6349467d04732585d77583701cf412ba/raw/78b7a59053a9512a648de543926644d4aa91dc44/gosling_H1437.txt",
+            "type": "csv",
+            "headerNames": ["id", "chr", "start", "end"],
+            "chromosomePrefix": "chr",
+            "chromosomeField": "chr",
+            "genomicFields": ["start", "end"],
+            "separator": ",",
+            "longToWideId": "id",
+            "sampleLength": 1000
+          },
+          "dataTransform": [
+            {"type": "filter", "field": "chr", "oneOf": ["chrX"]},
+            {"type": "filter", "field": "chr_2", "oneOf": ["chrX"]}
+          ],
+          "tracks": [
+            {"mark": "withinLink"},
+            {
+              "mark": "brush",
+              "x": {"linkingId": "view2"},
+              "strokeWidth": {"value": 0}
+            }
+          ],
+          "x": {"field": "start", "type": "genomic", "linkingId": "view1"},
+          "xe": {"field": "start_2", "type": "genomic"},
+          "x1": {"field": "end", "type": "genomic"},
+          "x1e": {"field": "End_2", "type": "genomic"},
+          "stroke": {"value": "#6CB74C"},
+          "strokeWidth": {"value": 1},
+          "opacity": {"value": 0.4},
+          "style": {"outline": "white"},
+          "width": 800,
+          "height": 220
+        },
+        {
+          "alignment": "overlay",
+          "title": "H9",
+          "data": {
+            "url": "https://gist.githubusercontent.com/Peiyu-Github/6349467d04732585d77583701cf412ba/raw/78b7a59053a9512a648de543926644d4aa91dc44/gosling_H9.txt",
+            "type": "csv",
+            "headerNames": ["id", "chr", "start", "end"],
+            "chromosomePrefix": "chr",
+            "chromosomeField": "chr",
+            "genomicFields": ["start", "end"],
+            "separator": ",",
+            "longToWideId": "id",
+            "sampleLength": 1000
+          },
+          "dataTransform": [
+            {"type": "filter", "field": "chr", "oneOf": ["chrX"]},
+            {"type": "filter", "field": "chr_2", "oneOf": ["chrX"]}
+          ],
+          "tracks": [
+            {"mark": "withinLink"},
+            {
+              "mark": "brush",
+              "x": {"linkingId": "view2"},
+              "strokeWidth": {"value": 0}
+            }
+          ],
+          "x": {"field": "start", "type": "genomic", "linkingId": "view1"},
+          "xe": {"field": "start_2", "type": "genomic"},
+          "x1": {"field": "end", "type": "genomic"},
+          "x1e": {"field": "End_2", "type": "genomic"},
+          "stroke": {"value": "#6CB74C"},
+          "strokeWidth": {"value": 1},
+          "opacity": {"value": 0.4},
+          "style": {"outline": "white"},
+          "width": 800,
+          "height": 220
+        },
+        {
+          "alignment": "overlay",
+          "title": "HepG2",
+          "data": {
+            "url": "https://gist.githubusercontent.com/Peiyu-Github/6349467d04732585d77583701cf412ba/raw/78b7a59053a9512a648de543926644d4aa91dc44/gosling_HepG2.txt",
+            "type": "csv",
+            "headerNames": ["id", "chr", "start", "end"],
+            "chromosomePrefix": "chr",
+            "chromosomeField": "chr",
+            "genomicFields": ["start", "end"],
+            "separator": ",",
+            "longToWideId": "id",
+            "sampleLength": 1000
+          },
+          "dataTransform": [
+            {"type": "filter", "field": "chr", "oneOf": ["chrX"]},
+            {"type": "filter", "field": "chr_2", "oneOf": ["chrX"]}
+          ],
+          "tracks": [
+            {"mark": "withinLink"},
+            {
+              "mark": "brush",
+              "x": {"linkingId": "view2"},
+              "strokeWidth": {"value": 0}
+            }
+          ],
+          "x": {"field": "start", "type": "genomic", "linkingId": "view1"},
+          "xe": {"field": "start_2", "type": "genomic"},
+          "x1": {"field": "end", "type": "genomic"},
+          "x1e": {"field": "End_2", "type": "genomic"},
+          "stroke": {"value": "#6CB74C"},
+          "strokeWidth": {"value": 1},
+          "opacity": {"value": 0.4},
+          "style": {"outline": "white"},
+          "width": 800,
+          "height": 220
+        },
+        {
+          "alignment": "overlay",
+          "title": "HMTERT",
+          "data": {
+            "url": "https://gist.githubusercontent.com/Peiyu-Github/6349467d04732585d77583701cf412ba/raw/78b7a59053a9512a648de543926644d4aa91dc44/gosling_HMTERT.txt",
+            "type": "csv",
+            "headerNames": ["id", "chr", "start", "end"],
+            "chromosomePrefix": "chr",
+            "chromosomeField": "chr",
+            "genomicFields": ["start", "end"],
+            "separator": ",",
+            "longToWideId": "id",
+            "sampleLength": 1000
+          },
+          "dataTransform": [
+            {"type": "filter", "field": "chr", "oneOf": ["chrX"]},
+            {"type": "filter", "field": "chr_2", "oneOf": ["chrX"]}
+          ],
+          "tracks": [
+            {"mark": "withinLink"},
+            {
+              "mark": "brush",
+              "x": {"linkingId": "view2"},
+              "strokeWidth": {"value": 0}
+            }
+          ],
+          "x": {"field": "start", "type": "genomic", "linkingId": "view1"},
+          "xe": {"field": "start_2", "type": "genomic"},
+          "x1": {"field": "end", "type": "genomic"},
+          "x1e": {"field": "End_2", "type": "genomic"},
+          "stroke": {"value": "#6CB74C"},
+          "strokeWidth": {"value": 1},
+          "opacity": {"value": 0.4},
+          "style": {"outline": "white"},
+          "width": 800,
+          "height": 220
+        },
+        {
+          "alignment": "overlay",
+          "title": "HT1197",
+          "data": {
+            "url": "https://gist.githubusercontent.com/Peiyu-Github/6349467d04732585d77583701cf412ba/raw/78b7a59053a9512a648de543926644d4aa91dc44/gosling_HT1197.txt",
+            "type": "csv",
+            "headerNames": ["id", "chr", "start", "end"],
+            "chromosomePrefix": "chr",
+            "chromosomeField": "chr",
+            "genomicFields": ["start", "end"],
+            "separator": ",",
+            "longToWideId": "id",
+            "sampleLength": 1000
+          },
+          "dataTransform": [
+            {"type": "filter", "field": "chr", "oneOf": ["chrX"]},
+            {"type": "filter", "field": "chr_2", "oneOf": ["chrX"]}
+          ],
+          "tracks": [
+            {"mark": "withinLink"},
+            {
+              "mark": "brush",
+              "x": {"linkingId": "view2"},
+              "strokeWidth": {"value": 0}
+            }
+          ],
+          "x": {"field": "start", "type": "genomic", "linkingId": "view1"},
+          "xe": {"field": "start_2", "type": "genomic"},
+          "x1": {"field": "end", "type": "genomic"},
+          "x1e": {"field": "End_2", "type": "genomic"},
+          "stroke": {"value": "#6CB74C"},
+          "strokeWidth": {"value": 1},
+          "opacity": {"value": 0.4},
+          "style": {"outline": "white"},
+          "width": 800,
+          "height": 220
+        },
+        {
+          "alignment": "overlay",
+          "title": "Jurkat",
+          "data": {
+            "url": "https://gist.githubusercontent.com/Peiyu-Github/6349467d04732585d77583701cf412ba/raw/78b7a59053a9512a648de543926644d4aa91dc44/gosling_Jurkat.txt",
+            "type": "csv",
+            "headerNames": ["id", "chr", "start", "end"],
+            "chromosomePrefix": "chr",
+            "chromosomeField": "chr",
+            "genomicFields": ["start", "end"],
+            "separator": ",",
+            "longToWideId": "id",
+            "sampleLength": 1000
+          },
+          "dataTransform": [
+            {"type": "filter", "field": "chr", "oneOf": ["chrX"]},
+            {"type": "filter", "field": "chr_2", "oneOf": ["chrX"]}
+          ],
+          "tracks": [
+            {"mark": "withinLink"},
+            {
+              "mark": "brush",
+              "x": {"linkingId": "view2"},
+              "strokeWidth": {"value": 0}
+            }
+          ],
+          "x": {"field": "start", "type": "genomic", "linkingId": "view1"},
+          "xe": {"field": "start_2", "type": "genomic"},
+          "x1": {"field": "end", "type": "genomic"},
+          "x1e": {"field": "End_2", "type": "genomic"},
+          "stroke": {"value": "#6CB74C"},
+          "strokeWidth": {"value": 1},
+          "opacity": {"value": 0.4},
+          "style": {"outline": "white"},
+          "width": 800,
+          "height": 220
+        },
+        {
+          "alignment": "overlay",
+          "title": "K562",
+          "data": {
+            "url": "https://gist.githubusercontent.com/Peiyu-Github/6349467d04732585d77583701cf412ba/raw/78b7a59053a9512a648de543926644d4aa91dc44/gosling_K562.txt",
+            "type": "csv",
+            "headerNames": ["id", "chr", "start", "end"],
+            "chromosomePrefix": "chr",
+            "chromosomeField": "chr",
+            "genomicFields": ["start", "end"],
+            "separator": ",",
+            "longToWideId": "id",
+            "sampleLength": 1000
+          },
+          "dataTransform": [
+            {"type": "filter", "field": "chr", "oneOf": ["chrX"]},
+            {"type": "filter", "field": "chr_2", "oneOf": ["chrX"]}
+          ],
+          "tracks": [
+            {"mark": "withinLink"},
+            {
+              "mark": "brush",
+              "x": {"linkingId": "view2"},
+              "strokeWidth": {"value": 0}
+            }
+          ],
+          "x": {"field": "start", "type": "genomic", "linkingId": "view1"},
+          "xe": {"field": "start_2", "type": "genomic"},
+          "x1": {"field": "end", "type": "genomic"},
+          "x1e": {"field": "End_2", "type": "genomic"},
+          "stroke": {"value": "#6CB74C"},
+          "strokeWidth": {"value": 1},
+          "opacity": {"value": 0.4},
+          "style": {"outline": "white"},
+          "width": 800,
+          "height": 220
+        },
+        {
+          "alignment": "overlay",
+          "title": "KU19",
+          "data": {
+            "url": "https://gist.githubusercontent.com/Peiyu-Github/6349467d04732585d77583701cf412ba/raw/78b7a59053a9512a648de543926644d4aa91dc44/gosling_KU19.txt",
+            "type": "csv",
+            "headerNames": ["id", "chr", "start", "end"],
+            "chromosomePrefix": "chr",
+            "chromosomeField": "chr",
+            "genomicFields": ["start", "end"],
+            "separator": ",",
+            "longToWideId": "id",
+            "sampleLength": 1000
+          },
+          "dataTransform": [
+            {"type": "filter", "field": "chr", "oneOf": ["chrX"]},
+            {"type": "filter", "field": "chr_2", "oneOf": ["chrX"]}
+          ],
+          "tracks": [
+            {"mark": "withinLink"},
+            {
+              "mark": "brush",
+              "x": {"linkingId": "view2"},
+              "strokeWidth": {"value": 0}
+            }
+          ],
+          "x": {"field": "start", "type": "genomic", "linkingId": "view1"},
+          "xe": {"field": "start_2", "type": "genomic"},
+          "x1": {"field": "end", "type": "genomic"},
+          "x1e": {"field": "End_2", "type": "genomic"},
+          "stroke": {"value": "#6CB74C"},
+          "strokeWidth": {"value": 1},
+          "opacity": {"value": 0.4},
+          "style": {"outline": "white"},
+          "width": 800,
+          "height": 220
+        },
+        {
+          "alignment": "overlay",
+          "title": "LNCAP",
+          "data": {
+            "url": "https://gist.githubusercontent.com/Peiyu-Github/6349467d04732585d77583701cf412ba/raw/78b7a59053a9512a648de543926644d4aa91dc44/gosling_LNCAP.txt",
+            "type": "csv",
+            "headerNames": ["id", "chr", "start", "end"],
+            "chromosomePrefix": "chr",
+            "chromosomeField": "chr",
+            "genomicFields": ["start", "end"],
+            "separator": ",",
+            "longToWideId": "id",
+            "sampleLength": 1000
+          },
+          "dataTransform": [
+            {"type": "filter", "field": "chr", "oneOf": ["chrX"]},
+            {"type": "filter", "field": "chr_2", "oneOf": ["chrX"]}
+          ],
+          "tracks": [
+            {"mark": "withinLink"},
+            {
+              "mark": "brush",
+              "x": {"linkingId": "view2"},
+              "strokeWidth": {"value": 0}
+            }
+          ],
+          "x": {"field": "start", "type": "genomic", "linkingId": "view1"},
+          "xe": {"field": "start_2", "type": "genomic"},
+          "x1": {"field": "end", "type": "genomic"},
+          "x1e": {"field": "End_2", "type": "genomic"},
+          "stroke": {"value": "#6CB74C"},
+          "strokeWidth": {"value": 1},
+          "opacity": {"value": 0.4},
+          "style": {"outline": "white"},
+          "width": 800,
+          "height": 220
+        },
+        {
+          "alignment": "overlay",
+          "title": "LX",
+          "data": {
+            "url": "https://gist.githubusercontent.com/Peiyu-Github/6349467d04732585d77583701cf412ba/raw/78b7a59053a9512a648de543926644d4aa91dc44/gosling_LX.txt",
+            "type": "csv",
+            "headerNames": ["id", "chr", "start", "end"],
+            "chromosomePrefix": "chr",
+            "chromosomeField": "chr",
+            "genomicFields": ["start", "end"],
+            "separator": ",",
+            "longToWideId": "id",
+            "sampleLength": 1000
+          },
+          "dataTransform": [
+            {"type": "filter", "field": "chr", "oneOf": ["chrX"]},
+            {"type": "filter", "field": "chr_2", "oneOf": ["chrX"]}
+          ],
+          "tracks": [
+            {"mark": "withinLink"},
+            {
+              "mark": "brush",
+              "x": {"linkingId": "view2"},
+              "strokeWidth": {"value": 0}
+            }
+          ],
+          "x": {"field": "start", "type": "genomic", "linkingId": "view1"},
+          "xe": {"field": "start_2", "type": "genomic"},
+          "x1": {"field": "end", "type": "genomic"},
+          "x1e": {"field": "End_2", "type": "genomic"},
+          "stroke": {"value": "#6CB74C"},
+          "strokeWidth": {"value": 1},
+          "opacity": {"value": 0.4},
+          "style": {"outline": "white"},
+          "width": 800,
+          "height": 220
+        },
+        {
+          "alignment": "overlay",
+          "title": "MCF7",
+          "data": {
+            "url": "https://gist.githubusercontent.com/Peiyu-Github/6349467d04732585d77583701cf412ba/raw/78b7a59053a9512a648de543926644d4aa91dc44/gosling_MCF7.txt",
+            "type": "csv",
+            "headerNames": ["id", "chr", "start", "end"],
+            "chromosomePrefix": "chr",
+            "chromosomeField": "chr",
+            "genomicFields": ["start", "end"],
+            "separator": ",",
+            "longToWideId": "id",
+            "sampleLength": 1000
+          },
+          "dataTransform": [
+            {"type": "filter", "field": "chr", "oneOf": ["chrX"]},
+            {"type": "filter", "field": "chr_2", "oneOf": ["chrX"]}
+          ],
+          "tracks": [
+            {"mark": "withinLink"},
+            {
+              "mark": "brush",
+              "x": {"linkingId": "view2"},
+              "strokeWidth": {"value": 0}
+            }
+          ],
+          "x": {"field": "start", "type": "genomic", "linkingId": "view1"},
+          "xe": {"field": "start_2", "type": "genomic"},
+          "x1": {"field": "end", "type": "genomic"},
+          "x1e": {"field": "End_2", "type": "genomic"},
+          "stroke": {"value": "#6CB74C"},
+          "strokeWidth": {"value": 1},
+          "opacity": {"value": 0.4},
+          "style": {"outline": "white"},
+          "width": 800,
+          "height": 220
+        },
+        {
+          "alignment": "overlay",
+          "title": "MSFIB",
+          "data": {
+            "url": "https://gist.githubusercontent.com/Peiyu-Github/6349467d04732585d77583701cf412ba/raw/78b7a59053a9512a648de543926644d4aa91dc44/gosling_MSFIB.txt",
+            "type": "csv",
+            "headerNames": ["id", "chr", "start", "end"],
+            "chromosomePrefix": "chr",
+            "chromosomeField": "chr",
+            "genomicFields": ["start", "end"],
+            "separator": ",",
+            "longToWideId": "id",
+            "sampleLength": 1000
+          },
+          "dataTransform": [
+            {"type": "filter", "field": "chr", "oneOf": ["chrX"]},
+            {"type": "filter", "field": "chr_2", "oneOf": ["chrX"]}
+          ],
+          "tracks": [
+            {"mark": "withinLink"},
+            {
+              "mark": "brush",
+              "x": {"linkingId": "view2"},
+              "strokeWidth": {"value": 0}
+            }
+          ],
+          "x": {"field": "start", "type": "genomic", "linkingId": "view1"},
+          "xe": {"field": "start_2", "type": "genomic"},
+          "x1": {"field": "end", "type": "genomic"},
+          "x1e": {"field": "End_2", "type": "genomic"},
+          "stroke": {"value": "#6CB74C"},
+          "strokeWidth": {"value": 1},
+          "opacity": {"value": 0.4},
+          "style": {"outline": "white"},
+          "width": 800,
+          "height": 220
+        },
+        {
+          "alignment": "overlay",
+          "title": "MSIPS",
+          "data": {
+            "url": "https://gist.githubusercontent.com/Peiyu-Github/6349467d04732585d77583701cf412ba/raw/78b7a59053a9512a648de543926644d4aa91dc44/gosling_MSIPS.txt",
+            "type": "csv",
+            "headerNames": ["id", "chr", "start", "end"],
+            "chromosomePrefix": "chr",
+            "chromosomeField": "chr",
+            "genomicFields": ["start", "end"],
+            "separator": ",",
+            "longToWideId": "id",
+            "sampleLength": 1000
+          },
+          "dataTransform": [
+            {"type": "filter", "field": "chr", "oneOf": ["chrX"]},
+            {"type": "filter", "field": "chr_2", "oneOf": ["chrX"]}
+          ],
+          "tracks": [
+            {"mark": "withinLink"},
+            {
+              "mark": "brush",
+              "x": {"linkingId": "view2"},
+              "strokeWidth": {"value": 0}
+            }
+          ],
+          "x": {"field": "start", "type": "genomic", "linkingId": "view1"},
+          "xe": {"field": "start_2", "type": "genomic"},
+          "x1": {"field": "end", "type": "genomic"},
+          "x1e": {"field": "End_2", "type": "genomic"},
+          "stroke": {"value": "#6CB74C"},
+          "strokeWidth": {"value": 1},
+          "opacity": {"value": 0.4},
+          "style": {"outline": "white"},
+          "width": 800,
+          "height": 220
+        },
+        {
+          "alignment": "overlay",
+          "title": "MSLCL",
+          "data": {
+            "url": "https://gist.githubusercontent.com/Peiyu-Github/6349467d04732585d77583701cf412ba/raw/78b7a59053a9512a648de543926644d4aa91dc44/gosling_MSLCL.txt",
+            "type": "csv",
+            "headerNames": ["id", "chr", "start", "end"],
+            "chromosomePrefix": "chr",
+            "chromosomeField": "chr",
+            "genomicFields": ["start", "end"],
+            "separator": ",",
+            "longToWideId": "id",
+            "sampleLength": 1000
+          },
+          "dataTransform": [
+            {"type": "filter", "field": "chr", "oneOf": ["chrX"]},
+            {"type": "filter", "field": "chr_2", "oneOf": ["chrX"]}
+          ],
+          "tracks": [
+            {"mark": "withinLink"},
+            {
+              "mark": "brush",
+              "x": {"linkingId": "view2"},
+              "strokeWidth": {"value": 0}
+            }
+          ],
+          "x": {"field": "start", "type": "genomic", "linkingId": "view1"},
+          "xe": {"field": "start_2", "type": "genomic"},
+          "x1": {"field": "end", "type": "genomic"},
+          "x1e": {"field": "End_2", "type": "genomic"},
+          "stroke": {"value": "#6CB74C"},
+          "strokeWidth": {"value": 1},
+          "opacity": {"value": 0.4},
+          "style": {"outline": "white"},
+          "width": 800,
+          "height": 220
+        },
+        {
+          "alignment": "overlay",
+          "title": "NP",
+          "data": {
+            "url": "https://gist.githubusercontent.com/Peiyu-Github/6349467d04732585d77583701cf412ba/raw/78b7a59053a9512a648de543926644d4aa91dc44/gosling_NP.txt",
+            "type": "csv",
+            "headerNames": ["id", "chr", "start", "end"],
+            "chromosomePrefix": "chr",
+            "chromosomeField": "chr",
+            "genomicFields": ["start", "end"],
+            "separator": ",",
+            "longToWideId": "id",
+            "sampleLength": 1000
+          },
+          "dataTransform": [
+            {"type": "filter", "field": "chr", "oneOf": ["chrX"]},
+            {"type": "filter", "field": "chr_2", "oneOf": ["chrX"]}
+          ],
+          "tracks": [
+            {"mark": "withinLink"},
+            {
+              "mark": "brush",
+              "x": {"linkingId": "view2"},
+              "strokeWidth": {"value": 0}
+            }
+          ],
+          "x": {"field": "start", "type": "genomic", "linkingId": "view1"},
+          "xe": {"field": "start_2", "type": "genomic"},
+          "x1": {"field": "end", "type": "genomic"},
+          "x1e": {"field": "End_2", "type": "genomic"},
+          "stroke": {"value": "#6CB74C"},
+          "strokeWidth": {"value": 1},
+          "opacity": {"value": 0.4},
+          "style": {"outline": "white"},
+          "width": 800,
+          "height": 220
+        },
+        {
+          "alignment": "overlay",
+          "title": "The End",
+          "data": {
+            "url": "https://gist.githubusercontent.com/Peiyu-Github/6349467d04732585d77583701cf412ba/raw/3c9e749ef147a0a7b2408b6e0ccb6f9d2053532b/The_end.txt",
+            "type": "csv",
+            "headerNames": ["id", "chr", "start", "end"],
+            "chromosomePrefix": "chr",
+            "chromosomeField": "chr",
+            "genomicFields": ["start", "end"],
+            "separator": ",",
+            "longToWideId": "id",
+            "sampleLength": 1000
+          },
+          "dataTransform": [
+            {"type": "filter", "field": "chr", "oneOf": ["chrX"]},
+            {"type": "filter", "field": "chr_2", "oneOf": ["chrX"]}
+          ],
+          "tracks": [
+            {"mark": "withinLink"},
+            {
+              "mark": "brush",
+              "x": {"linkingId": "view2"},
+              "strokeWidth": {"value": 0}
+            }
+          ],
+          "x": {"field": "start", "type": "genomic", "linkingId": "view1"},
+          "xe": {"field": "start_2", "type": "genomic"},
+          "x1": {"field": "end", "type": "genomic"},
+          "x1e": {"field": "End_2", "type": "genomic"},
+          "stroke": {"value": "#6CB74C"},
+          "strokeWidth": {"value": 1},
+          "opacity": {"value": 0.4},
+          "style": {"outline": "white"},
+          "width": 800,
+          "height": 220
+        }
+      ]
+    }
+  ],
+  "responsiveSize": false
+})
+    </script>
+</body>
+</html>
